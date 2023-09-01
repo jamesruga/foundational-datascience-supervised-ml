@@ -1,0 +1,877 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Notebook}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{exercise-gradient-descent}{%
+\section{Exercise: Gradient descent}\label{exercise-gradient-descent}}
+
+Previously, we identified trends in winter temperatures by fitting a
+linear regression model to weather data. Here, we'll repeat this process
+by focusing on the optimizer. Specifically, we'll work with batch
+gradient descent and explore how changing the learning rate can alter
+its behavior.
+
+The model we'll be working with will be the same linear regression model
+that we've used in other units. The principles we learn, however, also
+apply to much more complex models.
+
+\hypertarget{loading-data-and-preparing-our-model}{%
+\subsection{Loading data and preparing our
+model}\label{loading-data-and-preparing-our-model}}
+
+Let's load up our weather data from Seattle, filter to January
+temperatures, and make slight adjustments so that the dates are
+mathematically interpretable.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{datetime} \PY{k+kn}{import} \PY{n}{datetime}
+\PY{k+kn}{import} \PY{n+nn}{pandas}
+\PY{o}{!}pip\PY{+w}{ }install\PY{+w}{ }statsmodels
+\PY{o}{!}wget\PY{+w}{ }https://raw.githubusercontent.com/MicrosoftDocs/mslearn\PYZhy{}introduction\PYZhy{}to\PYZhy{}machine\PYZhy{}learning/main/graphing.py
+\PY{o}{!}wget\PY{+w}{ }https://raw.githubusercontent.com/MicrosoftDocs/mslearn\PYZhy{}introduction\PYZhy{}to\PYZhy{}machine\PYZhy{}learning/main/Data/seattleWeather\PYZus{}1948\PYZhy{}2017.csv
+\PY{k+kn}{import} \PY{n+nn}{graphing} \PY{c+c1}{\PYZsh{} Custom graphing code. See our GitHub repository}
+
+\PY{c+c1}{\PYZsh{} Load a file that contains weather data for Seattle}
+\PY{n}{data} \PY{o}{=} \PY{n}{pandas}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{seattleWeather\PYZus{}1948\PYZhy{}2017.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{parse\PYZus{}dates}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Remove all dates after July 1 because we have to to plant onions before summer begins}
+\PY{n}{data} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{p}{[}\PY{n}{d}\PY{o}{.}\PY{n}{month} \PY{o}{\PYZlt{}} \PY{l+m+mi}{7} \PY{k}{for} \PY{n}{d} \PY{o+ow}{in} \PY{n}{data}\PY{o}{.}\PY{n}{date}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+
+
+\PY{c+c1}{\PYZsh{} Convert the dates into numbers so we can use them in our models}
+\PY{c+c1}{\PYZsh{} We make a year column that can contain fractions. For example,}
+\PY{c+c1}{\PYZsh{} 1948.5 is halfway through the year 1948}
+\PY{n}{data}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{year}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{year} \PY{o}{+} \PY{n}{d}\PY{o}{.}\PY{n}{timetuple}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{tm\PYZus{}yday} \PY{o}{/} \PY{l+m+mf}{365.25}\PY{p}{)} \PY{k}{for} \PY{n}{d} \PY{o+ow}{in} \PY{n}{data}\PY{o}{.}\PY{n}{date}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Let\PYZsq{}s take a quick look at our data}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Visual Check:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{graphing}\PY{o}{.}\PY{n}{scatter\PYZus{}2D}\PY{p}{(}\PY{n}{data}\PY{p}{,} 
+                    \PY{n}{label\PYZus{}x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{year}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} 
+                    \PY{n}{label\PYZus{}y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{min\PYZus{}temperature}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+                    \PY{n}{title}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Temperatures over time (°F)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Requirement already satisfied: statsmodels in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (0.11.0)
+Requirement already satisfied: pandas>=0.21 in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (from statsmodels)
+(1.1.5)
+Requirement already satisfied: scipy>=1.0 in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (from statsmodels)
+(1.5.3)
+Requirement already satisfied: patsy>=0.5 in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (from statsmodels)
+(0.5.2)
+Requirement already satisfied: numpy>=1.14 in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (from statsmodels)
+(1.21.6)
+Requirement already satisfied: python-dateutil>=2.7.3 in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (from
+pandas>=0.21->statsmodels) (2.8.2)
+Requirement already satisfied: pytz>=2017.2 in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (from
+pandas>=0.21->statsmodels) (2022.1)
+Requirement already satisfied: six in
+/anaconda/envs/azureml\_py38/lib/python3.8/site-packages (from
+patsy>=0.5->statsmodels) (1.16.0)
+--2023-08-18 12:03:06--
+https://raw.githubusercontent.com/MicrosoftDocs/mslearn-introduction-to-machine-
+learning/main/graphing.py
+Resolving raw.githubusercontent.com (raw.githubusercontent.com){\ldots}
+185.199.108.133, 185.199.111.133, 185.199.110.133, {\ldots}
+Connecting to raw.githubusercontent.com
+(raw.githubusercontent.com)|185.199.108.133|:443{\ldots} connected.
+HTTP request sent, awaiting response{\ldots} 200 OK
+Length: 21511 (21K) [text/plain]
+Saving to: ‘graphing.py.3’
+
+graphing.py.3       100\%[===================>]  21.01K  --.-KB/s    in 0s
+
+2023-08-18 12:03:06 (98.9 MB/s) - ‘graphing.py.3’ saved [21511/21511]
+
+--2023-08-18 12:03:08--
+https://raw.githubusercontent.com/MicrosoftDocs/mslearn-introduction-to-machine-
+learning/main/Data/seattleWeather\_1948-2017.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com){\ldots}
+185.199.108.133, 185.199.111.133, 185.199.110.133, {\ldots}
+Connecting to raw.githubusercontent.com
+(raw.githubusercontent.com)|185.199.108.133|:443{\ldots} connected.
+HTTP request sent, awaiting response{\ldots} 200 OK
+Length: 762017 (744K) [text/plain]
+Saving to: ‘seattleWeather\_1948-2017.csv.3’
+
+seattleWeather\_1948 100\%[===================>] 744.16K  --.-KB/s    in 0.01s
+
+2023-08-18 12:03:08 (59.2 MB/s) - ‘seattleWeather\_1948-2017.csv.3’ saved
+[762017/762017]
+
+Visual Check:
+    \end{Verbatim}
+
+    
+    
+    
+    
+    \hypertarget{fitting-a-model-automatically}{%
+\subsection{Fitting a model
+automatically}\label{fitting-a-model-automatically}}
+
+Let's fit a line to this data well by using an existing library.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{formula}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{smf}
+
+\PY{c+c1}{\PYZsh{} Perform linear regression to fit a line to our data}
+\PY{c+c1}{\PYZsh{} NB OLS uses the sum or mean of squared differences as a cost function,}
+\PY{c+c1}{\PYZsh{} which we\PYZsq{}re familiar with from our last exercise }
+\PY{n}{model} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{formula} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{min\PYZus{}temperature \PYZti{} year}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n}{data}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the model}
+\PY{n}{intercept} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{slope} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{The model is: y = }\PY{l+s+si}{\PYZob{}}\PY{n}{slope}\PY{l+s+si}{:}\PY{l+s+s2}{0.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ * X + }\PY{l+s+si}{\PYZob{}}\PY{n}{intercept}\PY{l+s+si}{:}\PY{l+s+s2}{0.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+The model is: y = 0.063 * X + -83.073
+    \end{Verbatim}
+
+    Ooh, some math! Don't let that bother you. It's quite common for labels
+and features to be referred to as \texttt{Y} and \texttt{X},
+respectively. Here: * \texttt{Y} is temperature (°F). * \texttt{X} is
+year. * -83 is a \emph{model parameter} that acts as the line offset. *
+0.063 is a \emph{model parameter} that defines the line slope (in °F per
+year).
+
+So this little equation states that the model estimates temperature by
+multiplying the year by \texttt{0.063} and then subtracting \texttt{83}.
+
+How did the library calculate these values? Let's go through the
+process.
+
+\hypertarget{model-selection}{%
+\subsection{Model selection}\label{model-selection}}
+
+The first step is always selecting a model. Let's reuse the model that
+we used in previous exercises.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{MyModel}\PY{p}{:}
+
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+\PY{+w}{        }\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+\PY{l+s+sd}{        Creates a new MyModel}
+\PY{l+s+sd}{        \PYZsq{}\PYZsq{}\PYZsq{}}
+        \PY{c+c1}{\PYZsh{} Straight lines described by two parameters:}
+        \PY{c+c1}{\PYZsh{} The slope is the angle of the line}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{slope} \PY{o}{=} \PY{l+m+mi}{0}
+        \PY{c+c1}{\PYZsh{} The intercept moves the line up or down}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{intercept} \PY{o}{=} \PY{l+m+mi}{0}
+
+    \PY{k}{def} \PY{n+nf}{predict}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{date}\PY{p}{)}\PY{p}{:}
+\PY{+w}{        }\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+\PY{l+s+sd}{        Estimates the temperature from the date}
+\PY{l+s+sd}{        \PYZsq{}\PYZsq{}\PYZsq{}}
+        \PY{k}{return} \PY{n}{date} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{slope} \PY{o}{+} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{intercept}
+
+    \PY{k}{def} \PY{n+nf}{get\PYZus{}summary}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+\PY{+w}{        }\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+\PY{l+s+sd}{        Returns a string that summarises the model}
+\PY{l+s+sd}{        \PYZsq{}\PYZsq{}\PYZsq{}}
+        \PY{k}{return} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y = }\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{slope}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ * x + }\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{intercept}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Model class ready}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Model class ready
+    \end{Verbatim}
+
+    \hypertarget{fitting-our-model-with-gradient-descent}{%
+\subsection{Fitting our model with gradient
+descent}\label{fitting-our-model-with-gradient-descent}}
+
+The automatic method used the \emph{ordinary least squares} (OLS)
+method, which is the standard way to fit a line. OLS uses the mean (or
+sum) of square differences as a cost function. (Recall our
+experimentation with the sum of squared differences in the last
+exercise.) Let's replicate the preceding line fitting, and break down
+each step so we can watch it in action.
+
+Recall that for each iteration, our training conducts three steps:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Estimation of \texttt{Y} (temperature) from \texttt{X} (year).
+\item
+  Calculation of the cost function and its slope.
+\item
+  Adjustment of our model according to this slope.
+\end{enumerate}
+
+Let's implement this now to watch it in action. Note that \emph{to keep
+things simple, we'll focus on estimating one parameter (line slope) for
+now}.
+
+\hypertarget{visualizing-the-error-function}{%
+\subsubsection{Visualizing the error
+function}\label{visualizing-the-error-function}}
+
+First, let's look at the error function for this data. Normally we don't
+know this in advance, but for learning purposes, let's calculate it now
+for different potential models.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+
+\PY{n}{x} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{year}
+\PY{n}{temperature\PYZus{}true} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{min\PYZus{}temperature}
+
+\PY{c+c1}{\PYZsh{} We\PYZsq{}ll use a prebuilt method to show a 3D plot}
+\PY{c+c1}{\PYZsh{} This requires a range of x values, a range of y values,}
+\PY{c+c1}{\PYZsh{} and a way to calculate z}
+\PY{c+c1}{\PYZsh{} Here, we set:}
+\PY{c+c1}{\PYZsh{}   x to a range of potential model intercepts}
+\PY{c+c1}{\PYZsh{}   y to a range of potential model slopes}
+\PY{c+c1}{\PYZsh{}   z as the cost for that combination of model parameters   }
+
+\PY{c+c1}{\PYZsh{} Choose a range of intercepts and slopes values}
+\PY{n}{intercepts} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{100}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{l+m+mi}{70}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}
+\PY{n}{slopes} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mf}{0.060}\PY{p}{,}\PY{l+m+mf}{0.07}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}
+
+
+\PY{c+c1}{\PYZsh{} Set a cost function. This will be the mean of squared differences}
+\PY{k}{def} \PY{n+nf}{cost\PYZus{}function}\PY{p}{(}\PY{n}{temperature\PYZus{}estimate}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Calculates cost for a given temperature estimate}
+\PY{l+s+sd}{    Our cost function is the mean of squared differences (a.k.a. mean squared error)}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{c+c1}{\PYZsh{} Note that with NumPy to square each value, we use **}
+    \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{(}\PY{n}{temperature\PYZus{}true} \PY{o}{\PYZhy{}} \PY{n}{temperature\PYZus{}estimate}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{predict\PYZus{}and\PYZus{}calc\PYZus{}cost}\PY{p}{(}\PY{n}{intercept}\PY{p}{,} \PY{n}{slope}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+\PY{l+s+sd}{    Uses the model to make a prediction, then calculates the cost }
+\PY{l+s+sd}{    \PYZsq{}\PYZsq{}\PYZsq{}}
+
+    \PY{c+c1}{\PYZsh{} Predict temperature by using these model parameters}
+    \PY{n}{temperature\PYZus{}estimate} \PY{o}{=} \PY{n}{x} \PY{o}{*} \PY{n}{slope} \PY{o}{+} \PY{n}{intercept}
+
+    \PY{c+c1}{\PYZsh{} Calculate cost}
+    \PY{k}{return} \PY{n}{cost\PYZus{}function}\PY{p}{(}\PY{n}{temperature\PYZus{}estimate}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Call the graphing method. This will use our cost function,}
+\PY{c+c1}{\PYZsh{} which is above. If you want to view this code in detail,}
+\PY{c+c1}{\PYZsh{} then see this project\PYZsq{}s GitHub repository}
+\PY{n}{graphing}\PY{o}{.}\PY{n}{surface}\PY{p}{(}\PY{n}{x\PYZus{}values}\PY{o}{=}\PY{n}{intercepts}\PY{p}{,} 
+                \PY{n}{y\PYZus{}values}\PY{o}{=}\PY{n}{slopes}\PY{p}{,} 
+                \PY{n}{calc\PYZus{}z}\PY{o}{=}\PY{n}{predict\PYZus{}and\PYZus{}calc\PYZus{}cost}\PY{p}{,} 
+                \PY{n}{title}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cost for Different Model Parameters}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+                \PY{n}{axis\PYZus{}title\PYZus{}x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Model intercept}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+                \PY{n}{axis\PYZus{}title\PYZus{}y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Model slope}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+                \PY{n}{axis\PYZus{}title\PYZus{}z}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cost}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+    The preceding graph is interactive. Try clicking and dragging the mouse
+to rotate it.
+
+Notice how cost changes with both intercept and line slope. This is
+because our model has a slope and an intercept, which both will affect
+how well the line fits the data. A consequence is that the gradient of
+the cost function must also be described by two numbers: one for
+intercept and one for line slope.
+
+Our lowest point on the graph is the location of the best line equation
+for our data: a slope of 0.063 and an intercept of -83. Let's try to
+train a model to find this point.
+
+\hypertarget{implementing-gradient-descent}{%
+\subsubsection{Implementing gradient
+descent}\label{implementing-gradient-descent}}
+
+To implement gradient descent, we need a method that can calculate the
+gradient of the preceding curve.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{calculate\PYZus{}gradient}\PY{p}{(}\PY{n}{temperature\PYZus{}estimate}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    This calculates the gradient for a linear regession }
+\PY{l+s+sd}{    by using the Mean Squared Error cost function}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+
+    \PY{c+c1}{\PYZsh{} The partial derivatives of MSE are as follows}
+    \PY{c+c1}{\PYZsh{} You don\PYZsq{}t need to be able to do this just yet, but}
+    \PY{c+c1}{\PYZsh{} it\PYZsq{}s important to note that these give you the two gradients}
+    \PY{c+c1}{\PYZsh{} that we need to train our model}
+    \PY{n}{error} \PY{o}{=} \PY{n}{temperature\PYZus{}estimate} \PY{o}{\PYZhy{}} \PY{n}{temperature\PYZus{}true}
+    \PY{n}{grad\PYZus{}intercept} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{error}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{2}
+    \PY{n}{grad\PYZus{}slope} \PY{o}{=} \PY{p}{(}\PY{n}{x} \PY{o}{*} \PY{n}{error}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{2}
+
+    \PY{k}{return} \PY{n}{grad\PYZus{}intercept}\PY{p}{,} \PY{n}{grad\PYZus{}slope}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Function is ready!}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Function is ready!
+    \end{Verbatim}
+
+    Now all we need is a starting guess, and a loop that will update this
+guess with each iteration.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{gradient\PYZus{}descent}\PY{p}{(}\PY{n}{learning\PYZus{}rate}\PY{p}{,} \PY{n}{number\PYZus{}of\PYZus{}iterations}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Performs gradient descent for a one\PYZhy{}variable function. }
+
+\PY{l+s+sd}{    learning\PYZus{}rate: Larger numbers follow the gradient more aggressively}
+\PY{l+s+sd}{    number\PYZus{}of\PYZus{}iterations: The maximum number of iterations to perform}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+
+    \PY{c+c1}{\PYZsh{} Our starting guess is y = 0 * x \PYZhy{} 83}
+    \PY{c+c1}{\PYZsh{} We\PYZsq{}re going to start with the correct intercept so that }
+    \PY{c+c1}{\PYZsh{} only the line\PYZsq{}s slope is estimated. This is just to keep}
+    \PY{c+c1}{\PYZsh{} things simple for this exercise}
+    \PY{n}{model} \PY{o}{=} \PY{n}{MyModel}\PY{p}{(}\PY{p}{)}
+    \PY{n}{model}\PY{o}{.}\PY{n}{intercept} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{83}
+    \PY{n}{model}\PY{o}{.}\PY{n}{slope} \PY{o}{=} \PY{l+m+mi}{0}
+
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{number\PYZus{}of\PYZus{}iterations}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Calculate the predicted values}
+        \PY{n}{predicted\PYZus{}temperature} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} == OPTIMIZER ===}
+        \PY{c+c1}{\PYZsh{} Calculate the gradient}
+        \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{grad\PYZus{}slope} \PY{o}{=} \PY{n}{calculate\PYZus{}gradient}\PY{p}{(}\PY{n}{predicted\PYZus{}temperature}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} Update the estimation of the line}
+        \PY{n}{model}\PY{o}{.}\PY{n}{slope} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{n}{learning\PYZus{}rate} \PY{o}{*} \PY{n}{grad\PYZus{}slope}
+
+        \PY{c+c1}{\PYZsh{} Print the current estimation and cost every 100 iterations}
+        \PY{k}{if}\PY{p}{(} \PY{n}{i} \PY{o}{\PYZpc{}} \PY{l+m+mi}{100} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{)}\PY{p}{:}
+            \PY{n}{estimate} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+            \PY{n}{cost} \PY{o}{=} \PY{n}{cost\PYZus{}function}\PY{p}{(}\PY{n}{estimate}\PY{p}{)}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Next estimate:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}summary}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cost: }\PY{l+s+si}{\PYZob{}}\PY{n}{cost}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Print the final model}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Final estimate:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Run gradient descent}
+\PY{n}{gradient\PYZus{}descent}\PY{p}{(}\PY{n}{learning\PYZus{}rate}\PY{o}{=}\PY{l+m+mf}{1E\PYZhy{}9}\PY{p}{,} \PY{n}{number\PYZus{}of\PYZus{}iterations}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Next estimate: y = 0.0004946403321335834 * x + -83 Cost: 15374.06481788891
+Next estimate: y = 0.034564263954523104 * x + -83 Cost: 3218.0503324264355
+Next estimate: y = 0.050035120236006536 * x + -83 Cost: 711.4491469584556
+Next estimate: y = 0.05706036350652576 * x + -83 Cost: 194.5815905316767
+Next estimate: y = 0.060250493523378544 * x + -83 Cost: 88.00218235322374
+Next estimate: y = 0.061699116600551045 * x + -83 Cost: 66.02523660294689
+Next estimate: y = 0.06235692954504888 * x + -83 Cost: 61.493534346710646
+Next estimate: y = 0.0626556393176375 * x + -83 Cost: 60.55908578536231
+Next estimate: y = 0.06279128202425543 * x + -83 Cost: 60.36640010911301
+Next estimate: y = 0.06285287674109104 * x + -83 Cost: 60.326667831309834
+Final estimate: y = 0.06288066221361607 * x + -83
+    \end{Verbatim}
+
+    Our model found the correct answer, but it took a number of steps.
+Looking at the printout, we can see how it progressively stepped toward
+the correct solution.
+
+Now, what happens if we make the learning rate faster? This means taking
+larger steps.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{gradient\PYZus{}descent}\PY{p}{(}\PY{n}{learning\PYZus{}rate}\PY{o}{=}\PY{l+m+mf}{1E\PYZhy{}8}\PY{p}{,} \PY{n}{number\PYZus{}of\PYZus{}iterations}\PY{o}{=}\PY{l+m+mi}{200}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Next estimate: y = 0.004946403321335834 * x + -83 Cost: 13267.277888290606
+Next estimate: y = 0.06288803098785394 * x + -83 Cost: 60.31736349245315
+Final estimate: y = 0.0629041077135948 * x + -83
+    \end{Verbatim}
+
+    Our model appears to have found the solution faster. If we increase the
+rate even more, however, things don't go so well:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{gradient\PYZus{}descent}\PY{p}{(}\PY{n}{learning\PYZus{}rate}\PY{o}{=}\PY{l+m+mf}{5E\PYZhy{}7}\PY{p}{,} \PY{n}{number\PYZus{}of\PYZus{}iterations}\PY{o}{=}\PY{l+m+mi}{500}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Next estimate: y = 0.24732016606679166 * x + -83 Cost: 133774.64171441036
+Next estimate: y = 9.500952345613598e+45 * x + -83 Cost: 3.549071667291539e+98
+Next estimate: y = 4.894806810765144e+92 * x + -83 Cost: 9.420015144175315e+191
+Next estimate: y = 2.52176127646553e+139 * x + -83 Cost: 2.500278766819332e+285
+Next estimate: y = 1.2991891572707298e+186 * x + -83 Cost: inf
+Final estimate: y = -2.2830799448007263e+232 * x + -83
+    \end{Verbatim}
+
+    Notice how the cost is getting worse each time.
+
+This is because the steps that the model was taking were too large.
+Although it would step toward the correct solution, it would step too
+far and actually get worse with each attempt.
+
+For each model, there's an ideal learning rate. It requires
+experimentation.
+
+\hypertarget{fitting-multiple-variables-simultaneously}{%
+\subsection{Fitting multiple variables
+simultaneously}\label{fitting-multiple-variables-simultaneously}}
+
+We've just fit one variable here to keep things simple. Expanding this
+to fit multiple variables requires only a few small code changes:
+
+\begin{itemize}
+\item
+  We need to update more than one variable in the gradient descent loop.
+\item
+  We need to do some preprocessing of the data, which we alluded to in
+  an earlier exercise. We'll cover how and why in later learning
+  material.
+\end{itemize}
+
+\hypertarget{summary}{%
+\subsection{Summary}\label{summary}}
+
+Well done! In this unit, we:
+
+\begin{itemize}
+\item
+  Watched gradient descent in action.
+\item
+  Saw how changing the learning rate can improve a model's training
+  speed.
+\item
+  Learned that changing the learning rate can also result in unstable
+  models.
+\end{itemize}
+
+You might have noticed that where the cost function stopped and the
+optimizer began became a little blurred here. Don't let that bother you.
+This is happens commonly, simply because they're conceptually separate
+and their mathematics sometimes can become intertwined.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
